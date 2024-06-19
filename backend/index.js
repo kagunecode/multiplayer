@@ -1,10 +1,18 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+});
+
+app.use(cors());
 
 let gameState = {
   players: {},
@@ -26,10 +34,10 @@ io.on('connection', (socket) => {
 
   socket.on('submitAnswer', (data) => {
     const { player, answer } = data;
+    console.log(player, answer)
     gameState.answers[player] = answer;
     io.emit('updateAnswers', gameState.answers);
     if (gameState.answers.player1 && gameState.answers.player2) {
-      // Compare answers and update scores
       if (gameState.answers.player1 === gameState.answers.player2) {
         gameState.scores.player1 += 10;
         gameState.scores.player2 += 10;
