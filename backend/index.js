@@ -14,6 +14,8 @@ const io = socketIo(server, {
 
 app.use(cors());
 
+
+//Update
 let gameState = {
   players: {},
   questions: [
